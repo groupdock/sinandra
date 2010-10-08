@@ -1,0 +1,66 @@
+== Sinandra
+Sinandra is a very simple blog engine built with Sinatra and a Cassandra backend.
+
+Why another blog engine? 
+
+Sinantra was written in order to learn Cassandra and understand Cassandra's data model.
+
+== Installation
+
+Make sure you install Cassandra. To get started with Cassandra: http://wiki.apache.org/cassandra/GettingStarted
+
+You also have to have sinatra installed:
+
+    sudo gem install sinatra
+    
+
+== Cassandra Configuration
+
+A sample Cassandra configuration is included: sample-cassandra-conf.yml.
+
+The important part is the following keyspace:
+
+	<Keyspace Name="sinandra">
+		<ColumnFamily CompareWith="BytesType" Name="Authors"/>
+		<ColumnFamily CompareWith="BytesType" Name="BlogEntries"/>
+		<ColumnFamily CompareWith="TimeUUIDType" Name="TaggedPosts"/>
+		<ColumnFamily CompareWith="TimeUUIDType" Name="Comments"
+		    CompareSubcolumnsWith="BytesType" type="Super"/>
+	</Keyspace>
+
+== Sinandra Configuration
+
+You can configure Sinandra using a file called config.yml. Using this config file, you can set:
+* the title of your blog
+* The author of the blog (only supports a single author)
+* The about paragraph displayed on the right-side column
+* the username of the person allowed to post blog entries
+* the password of the person allowed to post blog entries
+
+A sample configuration file is included: sample-config.yml.
+
+If you do not include a config.yml file, the following defaults are used:
+* blog title = 'a simple blog'
+* blog author  = 'Tyrone Badu'
+* about paragraph =  'Lorem ipsum...'
+* username = 'admin'
+* password = 'super'
+
+== Running Sinandra
+
+To run sinandra, simply use: ruby sinandra.rb
+
+Then point your browser to : http://localhost:4567/
+
+== Screencast
+
+You can download a small screencast which runs through the features of sinandra here. Nothing very exciting but it lets you see it in action without downloading/running it:
+
+    http://lucpublic.s3.amazonaws.com/SinandraDemo.avi
+    
+== Recommended Links on Cassandra
+
+* https://github.com/dambalah/sinandra
+* http://blog.evanweaver.com/articles/2009/07/06/up-and-running-with-cassandra/
+* http://arin.me/blog/wtf-is-a-supercolumn-cassandra-data-model
+* http://www.parleys.com/#id=1866&st=5&sl=1
