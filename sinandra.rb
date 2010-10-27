@@ -5,6 +5,7 @@ require 'cassandra'
 require 'lib/to_slug'
 require 'time'
 require 'yaml'
+require 'simple_uuid'
 
 # Load config file
 config = begin
@@ -67,11 +68,11 @@ post '/posts/create' do
            'author' => @blog_author}
   archive_key = Date::MONTHNAMES[Time.now.month] + ' ' + Time.now.year.to_s
   db.insert(:BlogEntries, @post['title'].to_slug, @post)
-  db.insert(:TaggedPosts, '__notag__', {UUID.new => @post['title'].to_slug})
+  db.insert(:TaggedPosts, '__notag__', {SimpleUUID::UUID.new => @post['title'].to_slug})
   db.insert(:Lists, 'archives', { archive_key => Time.now.to_s })
-  db.insert(:Archives, archive_key, {UUID.new => @post['title'].to_slug})
+  db.insert(:Archives, archive_key, {SimpleUUID::UUID.new => @post['title'].to_slug})
   @post['tags'].split(',').each do |tag|
-    db.insert(:TaggedPosts, tag, {UUID.new => @post['title'].to_slug})
+    db.insert(:TaggedPosts, tag, {SimpleUUID::UUID.new => @post['title'].to_slug})
     db.insert(:Lists, 'tags', {tag => Time.now.to_s})
   end
   redirect "/posts/#{@post['title'].to_slug}"
@@ -83,7 +84,7 @@ post '/comments/create/:post' do
                'body' => params['comment'],
                'posted_on' => Time.now.strftime("%B %d, %Y"),
                'posted_at' => Time.now.strftime("%H:%M")}
-  db.insert(:Comments, params[:post], {UUID.new => @comment})
+  db.insert(:Comments, params[:post], {SimpleUUID::UUID.new => @comment})
   redirect "/posts/#{params[:post]}"
 end
 

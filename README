@@ -13,20 +13,29 @@ You also have to have sinatra installed:
 
     sudo gem install sinatra
     
+== Requirements
+
+The following gems are required and need to be installed:
+
+    sudo gem install actionpack cassandra simple-uuid
 
 == Cassandra Configuration
 
 A sample Cassandra configuration is included: sample-cassandra-conf.yml.
 
 The important part is the following keyspace:
-
-	<Keyspace Name="sinandra">
-		<ColumnFamily CompareWith="BytesType" Name="Authors"/>
-		<ColumnFamily CompareWith="BytesType" Name="BlogEntries"/>
-		<ColumnFamily CompareWith="TimeUUIDType" Name="TaggedPosts"/>
-		<ColumnFamily CompareWith="TimeUUIDType" Name="Comments"
-		    CompareSubcolumnsWith="BytesType" type="Super"/>
-	</Keyspace>
+	
+  <Keyspaces>
+		<Keyspace Name="sinandra">
+			<ColumnFamily CompareWith="BytesType" Name="Authors"/>
+			<ColumnFamily CompareWith="UTF8Type" Name="Lists"/>
+			<ColumnFamily CompareWith="TimeUUIDType" Name="Archives"/>
+			<ColumnFamily CompareWith="BytesType" Name="BlogEntries"/>
+			<ColumnFamily CompareWith="TimeUUIDType" Name="TaggedPosts"/>
+			<ColumnFamily CompareWith="TimeUUIDType" Name="Comments"
+				  CompareSubcolumnsWith="BytesType" ColumnType="Super"/>
+		</Keyspace>
+	</Keyspaces>	
 
 == Sinandra Configuration
 
