@@ -124,11 +124,13 @@ __END__
   </head>
   <body>
     <div id="header">
+      <div id="administration">
+        <a href="/posts/new">Create a post</a>
+      </div>
       <h1><%=h @blog_name %></h1>
       <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/archive">Archive</a></li>
-        <li><a href="/posts/new">Create a post</a></li>
       </ul>
     </div>
     
@@ -190,6 +192,9 @@ __END__
     <button type="submit">Save</button>
   </p>
 </form>
+<script>
+  document.getElementById('post_title').focus();
+</script>
 
 @@ show
 <div class="post">
@@ -200,7 +205,7 @@ __END__
 <p>
 	<%= @post["body"] %>
 </p>
-<div class="tags"><%= @post["tags"] %></div>
+<div class="tags"><strong>Tags: </strong><%= @post["tags"] %></div>
 </div>
 
 <div id="comments">
