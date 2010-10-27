@@ -6,6 +6,8 @@ require 'lib/to_slug'
 require 'time'
 require 'yaml'
 require 'simple_uuid'
+require 'maruku'
+require 'sanitize'
 
 # Load config file
 config = begin
@@ -61,8 +63,9 @@ end
 
 post '/posts/create' do
   protected!
+  post_body = Sanitize.clean(params['post']['body'], Sanitize::Config::BASIC)
   @post = {'title' => params['post']['title'], 
-           'body' => params['post']['body'], 
+           'body' => post_body,
            'tags' => params['post']['tags'],
            'slug' => params['post']['title'].to_slug,
            'author' => @blog_author}
@@ -79,9 +82,10 @@ post '/posts/create' do
 end
 
 post '/comments/create/:post' do
+  comment_body = Sanitize.clean(params['comment'], Sanitize::Config::BASIC)
   @comment = { 'commenter' => params['commenter'],
                'email' => params['email'],
-               'body' => params['comment'],
+               'body' => comment_body,
                'posted_on' => Time.now.strftime("%B %d, %Y"),
                'posted_at' => Time.now.strftime("%H:%M")}
   db.insert(:Comments, params[:post], {SimpleUUID::UUID.new => @comment})
@@ -167,7 +171,7 @@ __END__
 		by <%=h post["author"] %>
 	</p>
 	<p>
-		<%=h post["body"] %>
+		<%= Maruku.new(post["body"]).to_html %>
 	</p>
 	<div class="tags"><strong>Tags:</strong> <%=h post["tags"] %></div>
 </div>
@@ -182,7 +186,8 @@ __END__
   </p>
   <p>
     <label for="post_body">Body</label><br/>
-    <textarea id="post_body" name="post[body]" style="height: 500px"></textarea>
+    <textarea id="post_body" name="post[body]" style="height: 500px"></textarea><br/>
+    <small>Use <a target="_new" href="http://en.wikipedia.org/wiki/Markdown">Markdown</a> for formatting.</small><br/>
   </p>  
   <p>
     <label for="post_tags">Tags <em>(comma separated)</em></label><br/>
@@ -203,7 +208,7 @@ __END__
 	by <%=h @post["author"] %>
 </p>
 <p>
-	<%= @post["body"] %>
+	<%= Maruku.new(@post["body"]).to_html %>
 </p>
 <div class="tags"><strong>Tags: </strong><%= @post["tags"] %></div>
 </div>
@@ -221,7 +226,7 @@ __END__
         at <%=h comment['posted_at'] %></em>
       </div>
       <p>
-        <%=h comment['body'] %>
+        <%= Maruku.new(comment['body']).to_html %>
       </p>
     </div>
   <% end %>
@@ -237,7 +242,8 @@ __END__
 		</p>  
 		<p>
 		  <label for="comment">Comment</label><br/>
-		  <textarea id="comment" name="comment"></textarea>
+		  <textarea id="comment" name="comment"></textarea><br/>
+      <small>Use <a target="_new" href="http://en.wikipedia.org/wiki/Markdown">Markdown</a> for formatting.</small><br/>		  
 		</p>
 		<p>
 		  <button type="submit">Submit Comment</button>

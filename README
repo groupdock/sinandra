@@ -17,7 +17,7 @@ You also have to have sinatra installed:
 
 The following gems are required and need to be installed:
 
-    sudo gem install actionpack cassandra simple-uuid
+    sudo gem install actionpack cassandra simple-uuid maruku sanitize
 
 == Cassandra Configuration
 
