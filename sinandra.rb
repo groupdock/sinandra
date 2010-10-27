@@ -74,7 +74,7 @@ post '/posts/create' do
   db.insert(:TaggedPosts, '__notag__', {SimpleUUID::UUID.new => @post['title'].to_slug})
   db.insert(:Lists, 'archives', { archive_key => Time.now.to_s })
   db.insert(:Archives, archive_key, {SimpleUUID::UUID.new => @post['title'].to_slug})
-  @post['tags'].split(',').each do |tag|
+  @post['tags'].split(',').map {|t| t.strip }.each do |tag|
     db.insert(:TaggedPosts, tag, {SimpleUUID::UUID.new => @post['title'].to_slug})
     db.insert(:Lists, 'tags', {tag => Time.now.to_s})
   end
@@ -173,7 +173,11 @@ __END__
 	<p>
 		<%= Maruku.new(post["body"]).to_html %>
 	</p>
-	<div class="tags"><strong>Tags:</strong> <%=h post["tags"] %></div>
+	<div class="tags"><strong>Tags:</strong>
+	  <% post["tags"].split(',').map {|t| t.strip }.each do |tag| %>
+	    <a href="/tag/<%=h tag %>"><%=h tag %></a>&nbsp;
+	  <% end %>
+	</div>
 </div>
 <% end %>
 
@@ -210,7 +214,11 @@ __END__
 <p>
 	<%= Maruku.new(@post["body"]).to_html %>
 </p>
-<div class="tags"><strong>Tags: </strong><%= @post["tags"] %></div>
+<div class="tags"><strong>Tags: </strong>
+  <% @post["tags"].split(',').map {|t| t.strip }.each do |tag| %>
+    <a href="/tag/<%=h tag %>"><%=h tag %></a>&nbsp;
+  <% end %>
+</div>
 </div>
 
 <div id="comments">
@@ -254,12 +262,14 @@ __END__
 
 @@ archive
 <% @archives.each do |month| %>
+  <div id="archive">
   <h3><%=h month.keys[0] %></h3>
   <ul>
   <% month.values[0].each do |post| %>
     <li><a href='/posts/<%=h post["slug"] %>'><%=h post['title'] %></a></li>
   <% end %>
   </ul>
+  </div>
 <% end %>
 
 @@ not_found

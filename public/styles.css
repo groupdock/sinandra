@@ -180,3 +180,10 @@ button.disabled:hover {
   cursor: default;
   border-color: #cecece;
 }
+
+#archive {
+  font-size: 1.1em;
+}
+#archive li {
+  line-height: 1.4em;
+}
